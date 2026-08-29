@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   PRAGATI-AI Modern SaaS Light Theme Design System
+   ========================================================================== */
+
+:root {
+  --gov-bg: #F8FAFC;
+  --gov-surface: #FFFFFF;
+  --gov-card: #FFFFFF;
+  --gov-elevated: #F1F5F9;
+  --gov-hover: #F1F5F9;
+  --gov-border: #E2E8F0;
+  --gov-border-subtle: #F1F5F9;
+  --gov-border-light: #CBD5E1;
+  --gov-text-primary: #0F172A;
+  --gov-text-secondary: #334155;
+  --gov-text-muted: #64748B;
+  --gov-text-disabled: #94A3B8;
+
+  --brand-primary: #2563EB;
+  --brand-hover: #1D4ED8;
+  --cyan-accent: #0284C7;
+
+  --risk-low: #059669;
+  --risk-medium: #D97706;
+  --risk-high: #EA580C;
+  --risk-critical: #DC2626;
+
+  --radius-card: 10px;
+  --radius-btn: 6px;
+  --font-mono: 'JetBrains Mono', 'Roboto Mono', monospace;
+
+  --shadow-command-card: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --shadow-command-elevated: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-cyan-glow: 0 1px 3px 0 rgba(2, 132, 199, 0.15);
+
+  color-scheme: light;
+}
+
+html, body {
+  background-color: #f9f9f9;
+  color: #0F172A;
+  font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
+}
+
+/* Direct Theme Variable Utility Bindings */
+.bg-gov-bg { background-color: var(--gov-bg) !important; }
+.bg-gov-surface { background-color: var(--gov-surface) !important; }
+.bg-gov-card { background-color: var(--gov-card) !important; }
+.bg-gov-elevated { background-color: var(--gov-elevated) !important; }
+.bg-gov-hover:hover { background-color: var(--gov-hover) !important; }
+.border-gov-border { border-color: var(--gov-border) !important; }
+.border-gov-borderSubtle { border-color: var(--gov-border-subtle) !important; }
+.border-gov-borderLight { border-color: var(--gov-border-light) !important; }
+.text-gov-text-primary { color: var(--gov-text-primary) !important; }
+.text-gov-text-secondary { color: var(--gov-text-secondary) !important; }
+.text-gov-text-muted { color: var(--gov-text-muted) !important; }
+.text-gov-text-disabled { color: var(--gov-text-disabled) !important; }
+
+/* Clean SaaS Selection */
+::selection {
+  background-color: rgba(37, 99, 235, 0.18);
+  color: #0F172A;
+}
+
+/* Clean Sleek Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Leaflet Customizations for SaaS Light Theme */
+.leaflet-container {
+  background: #F1F5F9 !important;
+  font-family: inherit !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05) !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-tip {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 0.75rem !important;
+  line-height: 1.4 !important;
+}
+
+/* Subtle Pulse Keyframes */
+@keyframes tactical-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.1);
+  }
+}
+
+.animate-tactical-pulse {
+  animation: tactical-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

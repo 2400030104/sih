@@ -1,0 +1,438 @@
+/* ==========================================================================
+   PRAGATI-AI Modern Liquid SaaS Dashboard Styling
+   Fluid, Organic, High-Contrast Light Theme (No Glassmorphism)
+   ========================================================================== */
+
+/* ===== Fluid Layout Stack ===== */
+.liquid-dashboard-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  width: 100%;
+}
+
+/* ===== Fluid Panoramic Hero Ribbon ===== */
+.liquid-hero-ribbon {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 1rem; /* 16px */
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px 0 rgba(15, 23, 42, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: all 0.25s ease;
+}
+
+@media (min-width: 1024px) {
+  .liquid-hero-ribbon {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+  }
+}
+
+.liquid-hero-ribbon__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .liquid-hero-ribbon__stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.liquid-hero-ribbon__stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.5rem 0.75rem;
+  background: #F8FAFC;
+  border: 1px solid #F1F5F9;
+  border-radius: 0.75rem; /* 12px */
+  transition: all 0.2s ease;
+}
+
+.liquid-hero-ribbon__stat-item:hover {
+  background: #F1F5F9;
+  border-color: #E2E8F0;
+}
+
+.liquid-hero-ribbon__stat-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.liquid-hero-ribbon__stat-value {
+  font-size: 1.125rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: #0F172A;
+  line-height: 1.2;
+}
+
+/* ===== Fluid KPI Grid ===== */
+.liquid-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+@media (min-width: 640px) {
+  .liquid-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .liquid-kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.liquid-kpi-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 1.25rem; /* 20px */
+  padding: 1.375rem;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.liquid-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  transition: background 0.25s ease;
+}
+
+.liquid-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  border-color: #CBD5E1;
+}
+
+.liquid-kpi-card--blue::before { background: #2563EB; }
+.liquid-kpi-card--amber::before { background: #D97706; }
+.liquid-kpi-card--rose::before { background: #DC2626; }
+.liquid-kpi-card--emerald::before { background: #059669; }
+
+.liquid-kpi-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.liquid-kpi-card__icon-bubble {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.875rem; /* 14px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.liquid-kpi-card:hover .liquid-kpi-card__icon-bubble {
+  transform: scale(1.06);
+}
+
+.liquid-kpi-card__icon-bubble--blue {
+  background: #EFF6FF;
+  border: 1px solid #DBEAFE;
+  color: #2563EB;
+}
+.liquid-kpi-card__icon-bubble--amber {
+  background: #FFFBEB;
+  border: 1px solid #FEF3C7;
+  color: #D97706;
+}
+.liquid-kpi-card__icon-bubble--rose {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #DC2626;
+}
+.liquid-kpi-card__icon-bubble--emerald {
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  color: #059669;
+}
+
+.liquid-kpi-card__tag {
+  font-size: 0.625rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+}
+.liquid-kpi-card__tag--blue {
+  background: #EFF6FF;
+  color: #2563EB;
+  border: 1px solid #BFDBFE;
+}
+.liquid-kpi-card__tag--amber {
+  background: #FFFBEB;
+  color: #D97706;
+  border: 1px solid #FDE68A;
+}
+.liquid-kpi-card__tag--rose {
+  background: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
+.liquid-kpi-card__tag--emerald {
+  background: #ECFDF5;
+  color: #059669;
+  border: 1px solid #A7F3D0;
+}
+
+.liquid-kpi-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.liquid-kpi-card__title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748B;
+}
+
+.liquid-kpi-card__value {
+  font-size: 2rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: #0F172A;
+  line-height: 1.1;
+}
+
+.liquid-kpi-card__subtitle {
+  font-size: 0.75rem;
+  color: #64748B;
+  font-weight: 500;
+}
+
+/* ===== Fluid Asymmetric Workspace Grid (8 cols + 4 cols) ===== */
+.liquid-workspace-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .liquid-workspace-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+  .liquid-workspace-grid__main {
+    grid-column: span 8 / span 8;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .liquid-workspace-grid__side {
+    grid-column: span 4 / span 4;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+/* ===== Fluid Analytics Grid (3 Equal Columns) ===== */
+.liquid-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.5rem;
+  align-items: stretch;
+}
+@media (min-width: 1024px) {
+  .liquid-analytics-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ===== Liquid Alert Feed Panel ===== */
+.liquid-side-panel {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 1.25rem; /* 20px */
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+  padding: 1.375rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.liquid-side-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.liquid-side-panel__title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #0F172A;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.liquid-side-panel__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.liquid-alert-pill-card {
+  padding: 0.875rem;
+  border-radius: 0.875rem; /* 14px */
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.liquid-alert-pill-card:hover {
+  background: #F1F5F9;
+  border-color: #CBD5E1;
+  transform: translateX(2px);
+}
+
+.liquid-alert-pill-card--critical {
+  border-left: 3.5px solid #DC2626;
+  background: #FEF2F2/30;
+}
+.liquid-alert-pill-card--high {
+  border-left: 3.5px solid #EA580C;
+  background: #FFF7ED/30;
+}
+.liquid-alert-pill-card--medium {
+  border-left: 3.5px solid #D97706;
+  background: #FFFBEB/30;
+}
+
+/* ===== Fluid AI Action Modules (2 Hero Cards) ===== */
+.liquid-modules-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+@media (min-width: 768px) {
+  .liquid-modules-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.liquid-module-card {
+  padding: 1.75rem;
+  border-radius: 1.25rem; /* 20px */
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-module-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  border-color: #CBD5E1;
+}
+
+.liquid-module-card--copilot {
+  border-top: 4px solid #2563EB;
+}
+
+.liquid-module-card--simulator {
+  border-top: 4px solid #0284C7;
+}
+
+.liquid-module-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.liquid-module-card__icon-wrapper {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 1rem; /* 16px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.liquid-module-card__icon-wrapper--blue {
+  background: #EFF6FF;
+  border: 1px solid #DBEAFE;
+  color: #2563EB;
+}
+
+.liquid-module-card__icon-wrapper--sky {
+  background: #F0F9FF;
+  border: 1px solid #E0F2FE;
+  color: #0284C7;
+}
+
+.liquid-module-card__cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem; /* 12px */
+  font-size: 0.8125rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.liquid-module-card__cta-btn--primary {
+  background: #2563EB;
+  color: #FFFFFF;
+  box-shadow: 0 2px 4px 0 rgba(37, 99, 235, 0.2);
+}
+.liquid-module-card__cta-btn--primary:hover {
+  background: #1D4ED8;
+  box-shadow: 0 4px 8px 0 rgba(37, 99, 235, 0.3);
+}
+
+.liquid-module-card__cta-btn--secondary {
+  background: #0284C7;
+  color: #FFFFFF;
+  box-shadow: 0 2px 4px 0 rgba(2, 132, 199, 0.2);
+}
+.liquid-module-card__cta-btn--secondary:hover {
+  background: #0369A1;
+  box-shadow: 0 4px 8px 0 rgba(2, 132, 199, 0.3);
+}
