@@ -103,6 +103,34 @@ export interface ProjectQueryParams {
   sortOrder?: 'ASC' | 'DESC';
 }
 
+export interface CreateProjectPayload {
+  project_code: string;
+  project_name: string;
+  project_description?: string;
+  ministry_id: number;
+  sector_id: number;
+  state_id: number;
+  agency_id: number;
+  district_id?: number;
+  approved_cost: number;
+  original_cost?: number;
+  revised_cost?: number;
+  approved_date: string;
+  planned_start_date: string;
+  planned_completion_date: string;
+  project_stage?: string;
+  current_status?: string;
+  latitude?: number;
+  longitude?: number;
+  location_description?: string;
+  source_system?: string;
+}
+
+export const createProject = async (payload: CreateProjectPayload): Promise<ProjectDetails> => {
+  const res = await apiClient.post<ApiResponse<ProjectDetails>>('/projects', payload);
+  return res.data.data;
+};
+
 export const getProjects = async (params: ProjectQueryParams = {}): Promise<{ projects: ProjectListItem[]; pagination: any }> => {
   const res = await apiClient.get<ApiResponse<ProjectListItem[]>>('/projects', { params });
   return {
