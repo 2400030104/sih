@@ -38,6 +38,7 @@ export const Dashboard: React.FC = () => {
     ministries,
     riskDist,
     highRiskProjects,
+    allProjects,
     recentAlerts,
     loading,
     error,
@@ -231,7 +232,7 @@ export const Dashboard: React.FC = () => {
           {/* Main Area: India Geospatial Radar + High Risk Action Matrix (8 cols) */}
           <div className="liquid-workspace-grid__main">
             {/* National Geospatial Map */}
-            <IndiaRiskMap projects={highRiskProjects} />
+            <IndiaRiskMap projects={allProjects && allProjects.length > 0 ? allProjects : highRiskProjects} />
 
             {/* High-Risk Projects Matrix Table */}
             <ProjectRiskTable projects={highRiskProjects} />

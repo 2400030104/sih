@@ -6,6 +6,7 @@ import {
   getProjectsByState,
   getRiskDistribution,
   getHighRiskProjects,
+  getProjects,
   getAlerts
 } from '../services/api';
 import {
@@ -14,7 +15,8 @@ import {
   MinistryMetric,
   StateMetric,
   RiskDistributionMetric,
-  Alert
+  Alert,
+  ProjectListItem
 } from '../services/types';
 import { useSocket } from '../context/SocketContext';
 import useRealtimeEvent from './useRealtimeEvent';
@@ -26,6 +28,7 @@ export function useDashboard() {
   const [states, setStates] = useState<StateMetric[]>([]);
   const [riskDist, setRiskDist] = useState<RiskDistributionMetric[]>([]);
   const [highRiskProjects, setHighRiskProjects] = useState<any[]>([]);
+  const [allProjects, setAllProjects] = useState<ProjectListItem[]>([]);
   const [recentAlerts, setRecentAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +49,7 @@ export function useDashboard() {
         statesData,
         riskDistData,
         highRiskData,
+        projectsListRes,
         alertsData
       ] = await Promise.all([
         getDashboardSummary(),
@@ -54,6 +58,7 @@ export function useDashboard() {
         getProjectsByState(),
         getRiskDistribution(),
         getHighRiskProjects(),
+        getProjects({ limit: 100 }),
         getAlerts({ status: 'NEW' })
       ]);
 
@@ -63,6 +68,7 @@ export function useDashboard() {
       setStates(statesData);
       setRiskDist(riskDistData);
       setHighRiskProjects(highRiskData);
+      setAllProjects(projectsListRes.projects || []);
       setRecentAlerts(alertsData);
     } catch (err: any) {
       setError(err.message || 'Failed to load dashboard metrics');
@@ -108,6 +114,7 @@ export function useDashboard() {
     states,
     riskDist,
     highRiskProjects,
+    allProjects,
     recentAlerts,
     loading,
     error,

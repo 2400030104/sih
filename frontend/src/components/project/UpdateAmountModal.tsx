@@ -274,3 +274,4 @@ export const UpdateAmountModal: React.FC<UpdateAmountModalProps> = ({
     </div>
   );
 };
+
