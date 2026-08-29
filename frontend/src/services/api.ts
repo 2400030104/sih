@@ -137,6 +137,27 @@ export const createProject = async (payload: CreateProjectPayload): Promise<Proj
   return res.data.data;
 };
 
+export interface UpdateProjectPayload {
+  project_name?: string;
+  project_description?: string;
+  approved_cost?: number;
+  revised_cost?: number;
+  original_cost?: number;
+  approved_date?: string;
+  planned_start_date?: string;
+  planned_completion_date?: string;
+  current_status?: string;
+  project_stage?: string;
+  priority_category?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+export const updateProject = async (id: number | string, payload: UpdateProjectPayload): Promise<ProjectDetails> => {
+  const res = await apiClient.put<ApiResponse<ProjectDetails>>(`/projects/${id}`, payload);
+  return res.data.data;
+};
+
 export const getProjects = async (params: ProjectQueryParams = {}): Promise<{ projects: ProjectListItem[]; pagination: any }> => {
   const res = await apiClient.get<ApiResponse<ProjectListItem[]>>('/projects', { params });
   return {

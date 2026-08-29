@@ -6,14 +6,17 @@ import { PageContainer } from '../components/layout/PageContainer';
 import { ProjectFilters } from '../components/projects/ProjectFilters';
 import { ProjectTable } from '../components/projects/ProjectTable';
 import { AddProjectModal } from '../components/projects/AddProjectModal';
+import { UpdateAmountModal } from '../components/project/UpdateAmountModal';
 import { Pagination } from '../components/common/Pagination';
 import { Loading } from '../components/common/Loading';
 import { ErrorMessage } from '../components/common/ErrorMessage';
 import { EmptyState } from '../components/common/EmptyState';
+import { ProjectListItem } from '../services/types';
 
 export const Projects: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
+  const [editingProject, setEditingProject] = useState<ProjectListItem | null>(null);
 
   const initialRisk = searchParams.get('risk') ? searchParams.get('risk')!.toUpperCase() : undefined;
   const initialStatus = searchParams.get('status') ? searchParams.get('status')!.toUpperCase() : undefined;
@@ -96,7 +99,10 @@ export const Projects: React.FC = () => {
         />
       ) : (
         <div className="space-y-4">
-          <ProjectTable projects={projects} />
+          <ProjectTable
+            projects={projects}
+            onEditAmount={(proj) => setEditingProject(proj)}
+          />
           {pagination && (
             <Pagination
               pagination={pagination}
@@ -112,6 +118,14 @@ export const Projects: React.FC = () => {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSuccess={() => refetch()}
+      />
+
+      {/* Update Project Financial Amount Modal */}
+      <UpdateAmountModal
+        isOpen={Boolean(editingProject)}
+        onClose={() => setEditingProject(null)}
+        onSuccess={() => refetch()}
+        project={editingProject}
       />
     </PageContainer>
   );

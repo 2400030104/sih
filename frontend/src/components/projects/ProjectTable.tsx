@@ -1,59 +1,66 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, Bot, SlidersHorizontal, ArrowUpRight } from 'lucide-react';
+import {
+  ChevronRight,
+  Bot,
+  SlidersHorizontal,
+  FolderKanban,
+  Coins
+} from 'lucide-react';
 import { ProjectListItem } from '../../services/types';
-import { RiskBadge } from '../common/RiskBadge';
 import { StatusBadge } from '../common/StatusBadge';
-import { formatCurrency, formatPercentage } from '../../utils/formatCurrency';
+import { RiskBadge } from '../common/RiskBadge';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 interface ProjectTableProps {
   projects: ProjectListItem[];
-  onSort?: (field: string) => void;
-  currentSort?: { field?: string; order?: 'ASC' | 'DESC' };
+  onEditAmount?: (project: ProjectListItem) => void;
 }
 
-export const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
+export const ProjectTable: React.FC<ProjectTableProps> = ({ projects, onEditAmount }) => {
+  const formatPercentage = (val?: number | null) => {
+    if (val === undefined || val === null) return '0%';
+    return `${Number(val).toFixed(1)}%`;
+  };
+
   return (
     <div className="bg-white rounded-card border border-slate-200 shadow-command-card overflow-hidden">
       {/* Desktop & Tablet Table View */}
       <div className="hidden sm:block overflow-x-auto">
-        <table className="w-full text-left text-xs text-slate-700">
-          <thead className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-            <tr>
-              <th className="px-3 py-3.5 text-center w-14"># No.</th>
-              <th className="px-4 py-3.5">Code & Project Name</th>
-              <th className="px-4 py-3.5">Ministry & Sector</th>
-              <th className="px-4 py-3.5">State</th>
-              <th className="px-4 py-3.5 text-right">Approved Outlay</th>
-              <th className="px-4 py-3.5 text-center">Progress (Phy / Fin)</th>
-              <th className="px-4 py-3.5">Status</th>
-              <th className="px-4 py-3.5 text-center">Risk Tier</th>
-              <th className="px-4 py-3.5 text-right">Actions</th>
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-slate-50 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              <th className="py-3 px-4 w-12 text-center">#</th>
+              <th className="py-3 px-4 min-w-[220px]">Project Code &amp; Name</th>
+              <th className="py-3 px-4">Ministry &amp; Sector</th>
+              <th className="py-3 px-4">State</th>
+              <th className="py-3 px-4 text-right">Cost (₹ Cr)</th>
+              <th className="py-3 px-4 text-center min-w-[130px]">Progress</th>
+              <th className="py-3 px-4">Status</th>
+              <th className="py-3 px-4 text-center">Risk Tier</th>
+              <th className="py-3 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-slate-100 text-xs">
             {projects.map((project) => {
-              const progress = Number(project.physical_progress || 0);
-              const finProgress = Number(project.financial_progress || 0);
-              const approvedCost = Number(project.approved_cost || 0);
+              const approvedCost = Number(project.approved_cost) || 0;
               const revisedCost = project.revised_cost ? Number(project.revised_cost) : null;
-              const hasCostOverrun = revisedCost && revisedCost > approvedCost;
-              const projNum = String(project.project_id).padStart(2, '0');
+              const hasCostOverrun = revisedCost !== null && revisedCost > approvedCost;
+              const progress = Number(project.physical_progress) || 0;
+              const finProgress = Number(project.financial_progress) || 0;
 
               return (
                 <tr
                   key={project.project_id}
                   className="hover:bg-slate-50/80 transition-colors group"
                 >
-                  {/* Serial / Project Number */}
-                  <td className="px-3 py-3.5 text-center font-mono font-bold text-xs">
-                    <span className="inline-flex items-center justify-center px-2 py-1 rounded bg-slate-100 border border-slate-200 text-slate-700 group-hover:border-blue-300 group-hover:text-blue-600 transition-colors shadow-2xs">
-                      #{projNum}
-                    </span>
+                  {/* ID */}
+                  <td className="px-4 py-3.5 text-center font-mono text-[11px] font-bold text-slate-400">
+                    {String(project.project_id).padStart(2, '0')}
                   </td>
 
-                  {/* Code & Project Name */}
-                  <td className="px-4 py-3.5 max-w-sm">
+                  {/* Code & Name */}
+                  <td className="px-4 py-3.5">
                     <Link
                       to={`/projects/${project.project_id}`}
                       className="block group-hover:text-blue-600 transition-colors"
@@ -126,6 +133,16 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
 
                   {/* Actions */}
                   <td className="px-4 py-3.5 text-right whitespace-nowrap space-x-1.5">
+                    {onEditAmount && (
+                      <button
+                        onClick={() => onEditAmount(project)}
+                        className="p-1.5 rounded-btn bg-emerald-50 text-emerald-700 hover:bg-emerald-100 inline-flex items-center cursor-pointer transition-colors"
+                        title="Update Budget & Outlay Amount"
+                      >
+                        <Coins className="w-3.5 h-3.5 text-emerald-600" />
+                      </button>
+                    )}
+
                     <Link
                       to={`/copilot?projectId=${project.project_id}`}
                       className="p-1.5 rounded-btn bg-blue-50 text-blue-600 hover:bg-blue-100 inline-flex items-center"
@@ -171,26 +188,41 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
                 <h4 className="text-sm font-bold text-slate-900 leading-snug">
                   {project.project_name}
                 </h4>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  {project.sector_name} • {project.state_name}
-                </p>
               </div>
               <RiskBadge level={project.risk_level} score={project.overall_risk} size="sm" />
             </div>
 
-            <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
-              <span className="text-slate-500">Progress: <strong className="text-slate-900 font-mono">{formatPercentage(project.physical_progress)}</strong></span>
-              <StatusBadge status={project.current_status} size="sm" />
+            <div className="grid grid-cols-2 gap-2 text-xs py-1 border-y border-slate-100">
+              <div>
+                <span className="text-[10px] text-slate-400 block font-bold uppercase">Ministry</span>
+                <span className="font-semibold text-slate-700">{project.ministry_name}</span>
+              </div>
+              <div>
+                <span className="text-[10px] text-slate-400 block font-bold uppercase">Cost</span>
+                <span className="font-mono font-bold text-slate-900">
+                  {formatCurrency(Number(project.approved_cost))}
+                </span>
+              </div>
             </div>
 
-            <div className="flex items-center justify-between gap-2 pt-1">
-              <Link
-                to={`/projects/${project.project_id}`}
-                className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 rounded-btn text-xs font-bold text-center flex items-center justify-center gap-1"
-              >
-                <span>View Project 360°</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-blue-600" />
-              </Link>
+            <div className="flex items-center justify-between pt-1">
+              <StatusBadge status={project.current_status} size="sm" />
+              <div className="flex items-center gap-2">
+                {onEditAmount && (
+                  <button
+                    onClick={() => onEditAmount(project)}
+                    className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-btn border border-emerald-200"
+                  >
+                    Edit Cost
+                  </button>
+                )}
+                <Link
+                  to={`/projects/${project.project_id}`}
+                  className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-btn border border-blue-200 inline-flex items-center gap-1"
+                >
+                  View 360° <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </div>
           </div>
         ))}
@@ -198,3 +230,5 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
     </div>
   );
 };
+
+export default ProjectTable;

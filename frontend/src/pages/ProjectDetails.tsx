@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   Layers,
   Coins,
@@ -41,6 +41,7 @@ import { RecommendationList } from '../components/project/RecommendationList';
 import { Loading } from '../components/common/Loading';
 import { ErrorMessage } from '../components/common/ErrorMessage';
 import { AIProjectBrief } from '../components/project/AIProjectBrief';
+import { UpdateAmountModal } from '../components/project/UpdateAmountModal';
 
 type ActiveTab = 'overview' | 'financial' | 'schedule' | 'risk' | 'milestones' | 'alerts' | 'timeline';
 
@@ -55,6 +56,7 @@ export const ProjectDetails: React.FC = () => {
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isUpdateAmountOpen, setIsUpdateAmountOpen] = useState<boolean>(false);
 
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -118,45 +120,60 @@ export const ProjectDetails: React.FC = () => {
   // Subscribe to real-time events scoped to this project
   useRealtimeEvent('PROJECT_UPDATED', handleProjectRealtimeEvent);
   useRealtimeEvent('MONTHLY_DATA_ADDED', handleProjectRealtimeEvent);
-  useRealtimeEvent('MONTHLY_DATA_UPDATED', handleProjectRealtimeEvent);
-  useRealtimeEvent('MILESTONE_CREATED', handleProjectRealtimeEvent);
   useRealtimeEvent('MILESTONE_UPDATED', handleProjectRealtimeEvent);
-  useRealtimeEvent('MILESTONE_DELETED', handleProjectRealtimeEvent);
-  useRealtimeEvent('RISK_UPDATED', handleProjectRealtimeEvent);
-  useRealtimeEvent('ALERT_CREATED', handleProjectRealtimeEvent);
-  useRealtimeEvent('ALERT_ACKNOWLEDGED', handleProjectRealtimeEvent);
-  useRealtimeEvent('ALERT_RESOLVED', handleProjectRealtimeEvent);
-  useRealtimeEvent('RECOMMENDATION_CREATED', handleProjectRealtimeEvent);
-  useRealtimeEvent('RECOMMENDATION_UPDATED', handleProjectRealtimeEvent);
+  useRealtimeEvent('RISK_PREDICTION_UPDATED', handleProjectRealtimeEvent);
+  useRealtimeEvent('ALERT_TRIGGERED', handleProjectRealtimeEvent);
 
   const handleAcknowledgeAlert = async (alertId: number) => {
     try {
       await acknowledgeAlert(alertId);
-      await fetchProjectData(true);
+      setOverview((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          activeAlerts: prev.activeAlerts.map((a) =>
+            a.alert_id === alertId ? { ...a, alert_status: 'ACKNOWLEDGED' as any } : a
+          )
+        };
+      });
     } catch (err: any) {
-      alert(err.message || 'Failed to acknowledge alert');
+      console.error('Failed to acknowledge alert:', err);
     }
   };
 
   const handleResolveAlert = async (alertId: number) => {
     try {
-      await resolveAlert(alertId);
-      await fetchProjectData(true);
+      await resolveAlert(alertId, 1);
+      setOverview((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          activeAlerts: prev.activeAlerts.filter((a) => a.alert_id !== alertId)
+        };
+      });
     } catch (err: any) {
-      alert(err.message || 'Failed to resolve alert');
+      console.error('Failed to resolve alert:', err);
     }
   };
 
   const handleRecommendationStatus = async (recId: number, status: string) => {
     try {
       await updateRecommendationStatus(recId, status);
-      await fetchProjectData(true);
+      setOverview((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          activeRecommendations: prev.activeRecommendations.map((r) =>
+            r.recommendation_id === recId ? { ...r, recommendation_status: status as any } : r
+          )
+        };
+      });
     } catch (err: any) {
-      alert(err.message || 'Failed to update recommendation');
+      console.error('Failed to update recommendation status:', err);
     }
   };
 
-  if (loading) {
+  if (loading && !overview) {
     return (
       <PageContainer>
         <Loading type="page" message="Synthesizing Project 360° Intelligence Dossier..." />
@@ -184,6 +201,7 @@ export const ProjectDetails: React.FC = () => {
         project={project}
         riskLevel={latestRisk?.riskLevel || project.risk_level}
         overallRisk={latestRisk?.overallRisk ?? project.overall_risk}
+        onUpdateAmount={() => setIsUpdateAmountOpen(true)}
       />
 
       {/* 2. Command Center Section Navigation Tabs */}
@@ -209,7 +227,7 @@ export const ProjectDetails: React.FC = () => {
           }`}
         >
           <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
-          <span>Risk & SHAP Drivers</span>
+          <span>Risk &amp; SHAP Drivers</span>
         </button>
 
         <button
@@ -221,7 +239,7 @@ export const ProjectDetails: React.FC = () => {
           }`}
         >
           <Coins className="w-3.5 h-3.5 text-blue-600" />
-          <span>Financials & Spend</span>
+          <span>Financials &amp; Spend</span>
         </button>
 
         <button
@@ -233,7 +251,7 @@ export const ProjectDetails: React.FC = () => {
           }`}
         >
           <Clock className="w-3.5 h-3.5 text-amber-600" />
-          <span>Physical Progress</span>
+          <span>Schedule &amp; S-Curve</span>
         </button>
 
         <button
@@ -244,7 +262,7 @@ export const ProjectDetails: React.FC = () => {
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
-          <FileSpreadsheet className="w-3.5 h-3.5 text-blue-600" />
+          <Calendar className="w-3.5 h-3.5 text-purple-600" />
           <span>Milestones ({milestones.length})</span>
         </button>
 
@@ -257,7 +275,7 @@ export const ProjectDetails: React.FC = () => {
           }`}
         >
           <BellRing className="w-3.5 h-3.5 text-rose-600" />
-          <span>Alerts & Actions ({activeAlerts.length})</span>
+          <span>Alerts &amp; Actions ({activeAlerts.length})</span>
         </button>
 
         <button
@@ -268,52 +286,37 @@ export const ProjectDetails: React.FC = () => {
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
-          <Calendar className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Timeline ({timelineEvents.length})</span>
+          <FileSpreadsheet className="w-3.5 h-3.5 text-cyan-accent" />
+          <span>Audit Timeline</span>
         </button>
       </div>
 
-      {/* 3. Top Summary KPI Row (Always Visible) */}
-      <ProjectSummary
-        project={project}
-        latestMonthly={latestMonthlyData}
-        latestRisk={latestRisk}
-      />
-
-      {/* AI Project Intelligence Brief & Synthesis */}
-      {(activeTab === 'overview' || activeTab === 'risk') && (
-        <AIProjectBrief
-          projectId={project.project_id}
-          projectCode={project.project_code}
-          projectName={project.project_name}
-        />
-      )}
-
-      {/* Tab: Overview (All Sections) */}
+      {/* 3. Tab Contents */}
+      {/* Tab: 360 Overview */}
       {activeTab === 'overview' && (
-        <>
-          {/* Predictive Risk Assessment & SHAP Explainability Drivers */}
+        <div className="space-y-6">
+          <ProjectSummary project={project} latestMonthly={latestMonthlyData} latestRisk={latestRisk} />
+          
+          <AIProjectBrief
+            projectId={project.project_id}
+            projectCode={project.project_code}
+            projectName={project.project_name}
+          />
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <RiskOverview risk={latestRisk} />
-            <RiskFactors factors={riskFactors} />
+            <RiskTrendChart history={riskHistory} />
           </div>
 
-          {/* Risk Trend Trajectory Chart */}
-          <RiskTrendChart history={riskHistory} />
+          <RiskFactors factors={riskFactors} />
 
-          {/* Trajectory Charts: Physical/Financial Progress & Expenditure Incurred */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <ProgressCard monthlyData={monthlyData} />
             <CostCard monthlyData={monthlyData} approvedCost={Number(project.approved_cost || 0)} />
           </div>
 
-          {/* Milestones Delivery Matrix */}
           <MilestoneTable milestones={milestones} />
 
-          {/* Chronological Lifetime Event Stream */}
-          <Timeline events={timelineEvents} />
-
-          {/* Active Early Warnings & Prescriptive Recommendations */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <AlertList
               alerts={activeAlerts}
@@ -325,17 +328,17 @@ export const ProjectDetails: React.FC = () => {
               onStatusChange={handleRecommendationStatus}
             />
           </div>
-        </>
+        </div>
       )}
 
-      {/* Tab: Risk & SHAP Drivers */}
+      {/* Tab: Risk Analysis */}
       {activeTab === 'risk' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <RiskOverview risk={latestRisk} />
-            <RiskFactors factors={riskFactors} />
+            <RiskTrendChart history={riskHistory} />
           </div>
-          <RiskTrendChart history={riskHistory} />
+          <RiskFactors factors={riskFactors} />
         </div>
       )}
 
@@ -381,6 +384,27 @@ export const ProjectDetails: React.FC = () => {
           <Timeline events={timelineEvents} />
         </div>
       )}
+
+      {/* Update Financial Amount Modal */}
+      <UpdateAmountModal
+        isOpen={isUpdateAmountOpen}
+        onClose={() => setIsUpdateAmountOpen(false)}
+        onSuccess={() => fetchProjectData(true)}
+        project={
+          overview
+            ? {
+                project_id: overview.project.project_id,
+                project_code: overview.project.project_code,
+                project_name: overview.project.project_name,
+                approved_cost: overview.project.approved_cost,
+                revised_cost: overview.project.revised_cost,
+                original_cost: overview.project.original_cost
+              }
+            : null
+        }
+      />
     </PageContainer>
   );
 };
+
+export default ProjectDetails;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, Building2, MapPin, Layers, Briefcase, Bot, SlidersHorizontal } from 'lucide-react';
+import { ChevronLeft, Building2, MapPin, Layers, Briefcase, Bot, SlidersHorizontal, Coins } from 'lucide-react';
 import { ProjectDetails, RiskLevel } from '../../services/types';
 import { RiskBadge } from '../common/RiskBadge';
 import { StatusBadge } from '../common/StatusBadge';
@@ -11,13 +11,15 @@ interface ProjectHeaderProps {
   riskLevel?: RiskLevel;
   overallRisk?: number;
   priority?: string;
+  onUpdateAmount?: () => void;
 }
 
 export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
   project,
   riskLevel,
   overallRisk,
-  priority = 'P2'
+  priority = 'P2',
+  onUpdateAmount
 }) => {
   return (
     <div className="bg-white p-6 rounded-card border border-slate-200 shadow-command-card space-y-4">
@@ -69,7 +71,17 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
         </div>
 
         {/* Action Shortcuts */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          {onUpdateAmount && (
+            <button
+              onClick={onUpdateAmount}
+              className="px-3.5 py-2 rounded-btn bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+            >
+              <Coins className="w-4 h-4 text-emerald-600" />
+              <span>Update Amount</span>
+            </button>
+          )}
+
           <Link
             to={`/copilot?projectId=${project.project_id}`}
             className="px-3.5 py-2 rounded-btn bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs"
