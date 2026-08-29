@@ -241,7 +241,7 @@ class ProjectService {
       projectData.location_description || null,
       projectData.latitude || null,
       projectData.longitude || null,
-      projectData.original_cost,
+      projectData.original_cost !== undefined && projectData.original_cost !== null ? projectData.original_cost : projectData.approved_cost,
       projectData.revised_cost || null,
       projectData.approved_cost,
       projectData.approved_date,

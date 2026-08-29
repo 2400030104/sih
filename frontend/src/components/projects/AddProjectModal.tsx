@@ -3,13 +3,10 @@ import {
   X,
   Plus,
   Building2,
-  Layers,
   MapPin,
-  Calendar,
   Coins,
   FileText,
-  CheckCircle2,
-  Sparkles
+  CheckCircle2
 } from 'lucide-react';
 import { createProject, CreateProjectPayload } from '../../services/api';
 import { useToast } from '../common/Toast';
@@ -80,21 +77,21 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
 }) => {
   const { showToast } = useToast();
 
-  const [projectCode, setProjectCode] = useState<string>('CP-2026-');
+  const [projectCode, setProjectCode] = useState<string>(`PRJ-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`);
   const [projectName, setProjectName] = useState<string>('');
-  const [ministryId, setMinistryId] = useState<number>(1);
-  const [sectorId, setSectorId] = useState<number>(1);
+  const [ministryId, setMinistryId] = useState<number>(2);
+  const [sectorId, setSectorId] = useState<number>(2);
   const [agencyId, setAgencyId] = useState<number>(1);
-  const [stateId, setStateId] = useState<number>(1);
+  const [stateId, setStateId] = useState<number>(14);
   const [approvedCost, setApprovedCost] = useState<string>('1250.00');
   const [approvedDate, setApprovedDate] = useState<string>('2024-01-15');
   const [plannedStartDate, setPlannedStartDate] = useState<string>('2024-03-01');
   const [plannedCompletionDate, setPlannedCompletionDate] = useState<string>('2028-12-31');
   const [currentStatus, setCurrentStatus] = useState<string>('ONGOING');
-  const [projectStage, setProjectStage] = useState<string>('Implementation');
+  const [projectStage, setProjectStage] = useState<string>('EXECUTION');
   const [description, setDescription] = useState<string>('');
-  const [latitude, setLatitude] = useState<number>(19.7515);
-  const [longitude, setLongitude] = useState<number>(75.7139);
+  const [latitude, setLatitude] = useState<number>(26.2006);
+  const [longitude, setLongitude] = useState<number>(92.9376);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   if (!isOpen) return null;
@@ -137,10 +134,10 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
         project_code: projectCode.trim().toUpperCase(),
         project_name: projectName.trim(),
         project_description: description.trim() || undefined,
-        ministry_id: ministryId,
-        sector_id: sectorId,
-        agency_id: agencyId,
-        state_id: stateId,
+        ministry_id: Number(ministryId),
+        sector_id: Number(sectorId),
+        agency_id: Number(agencyId),
+        state_id: Number(stateId),
         approved_cost: costNum,
         original_cost: costNum,
         approved_date: approvedDate,
@@ -148,8 +145,8 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
         planned_completion_date: plannedCompletionDate,
         current_status: currentStatus,
         project_stage: projectStage,
-        latitude: latitude,
-        longitude: longitude,
+        latitude: Number(latitude),
+        longitude: Number(longitude),
         source_system: 'PAIMANA'
       };
 
@@ -381,9 +378,9 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
                   onChange={(e) => setCurrentStatus(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white"
                 >
-                  <option value="ONGOING">ONGOING (Standard Execution)</option>
+                  <option value="ONGOING">ONGOING (Active Execution)</option>
                   <option value="DELAYED">DELAYED (Schedule Variance Lag)</option>
-                  <option value="CRITICAL">CRITICAL (Requires Task-Force Intervention)</option>
+                  <option value="ON_HOLD">ON_HOLD (Pending Approvals)</option>
                   <option value="COMPLETED">COMPLETED (Commissioned Asset)</option>
                 </select>
               </div>
@@ -395,10 +392,11 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
                   onChange={(e) => setProjectStage(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white"
                 >
-                  <option value="Implementation">Implementation</option>
-                  <option value="Tendering">Tendering &amp; Award</option>
-                  <option value="Pre-Construction">Pre-Construction (Land &amp; Clearances)</option>
-                  <option value="Commissioning">Commissioning &amp; Trial Run</option>
+                  <option value="EXECUTION">EXECUTION (Implementation &amp; Civil Works)</option>
+                  <option value="PROCUREMENT">PROCUREMENT (Tendering &amp; Award)</option>
+                  <option value="PLANNING">PLANNING (Pre-Construction &amp; DPR)</option>
+                  <option value="COMMISSIONING">COMMISSIONING (Trial Run)</option>
+                  <option value="COMPLETED">COMPLETED (Operational)</option>
                 </select>
               </div>
             </div>

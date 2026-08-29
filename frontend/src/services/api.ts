@@ -35,8 +35,14 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     let customError = 'An unexpected error occurred';
-    if (error.response?.data?.message) {
-      customError = error.response.data.message;
+    if (error.response?.data) {
+      const data = error.response.data;
+      if (Array.isArray(data.data) && data.data.length > 0) {
+        const details = data.data.map((d: any) => `${d.field || 'Field'}: ${d.message}`).join('; ');
+        customError = details || data.message || customError;
+      } else if (data.message) {
+        customError = data.message;
+      }
     } else if (error.message) {
       customError = error.message;
     }

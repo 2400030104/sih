@@ -43,6 +43,7 @@ const validateCreateProject = [
     .withMessage('district_id must be a positive integer'),
   
   body('original_cost')
+    .optional({ nullable: true })
     .isFloat({ min: 0 })
     .withMessage('original_cost must be a non-negative number'),
   
@@ -89,17 +90,27 @@ const validateCreateProject = [
   
   body('current_status')
     .optional()
+    .customSanitizer((val) => (typeof val === 'string' ? val.toUpperCase().trim() : val))
     .isIn(['PROPOSED', 'APPROVED', 'ONGOING', 'COMPLETED', 'DELAYED', 'ON_HOLD', 'CANCELLED', 'CLOSED'])
     .withMessage('Invalid current_status'),
   
   body('project_stage')
     .optional()
+    .customSanitizer((val) => {
+      if (typeof val !== 'string') return val;
+      const upper = val.toUpperCase().trim();
+      if (upper === 'IMPLEMENTATION' || upper === 'CONSTRUCTION') return 'EXECUTION';
+      if (upper === 'TENDERING' || upper === 'TENDERING & AWARD') return 'PROCUREMENT';
+      if (upper === 'PRE-CONSTRUCTION') return 'PLANNING';
+      return upper;
+    })
     .isIn(['PLANNING', 'PROCUREMENT', 'EXECUTION', 'COMMISSIONING', 'COMPLETED'])
-    .withMessage('Invalid project_stage'),
+    .withMessage('Invalid project_stage (must be PLANNING, PROCUREMENT, EXECUTION, COMMISSIONING, or COMPLETED)'),
   
   body('priority_category')
     .optional()
-    .isIn(['TOP_PRIORITY', 'HIGH_IMPACT', 'REGULAR', 'STRATEGIC'])
+    .customSanitizer((val) => (typeof val === 'string' ? val.toUpperCase().trim() : val))
+    .isIn(['TOP_PRIORITY', 'HIGH_IMPACT', 'REGULAR', 'STRATEGIC', 'P1', 'P2', 'P3', 'P4'])
     .withMessage('Invalid priority_category'),
   
   body('source_system')
@@ -145,11 +156,20 @@ const validateUpdateProject = [
   
   body('current_status')
     .optional()
+    .customSanitizer((val) => (typeof val === 'string' ? val.toUpperCase().trim() : val))
     .isIn(['PROPOSED', 'APPROVED', 'ONGOING', 'COMPLETED', 'DELAYED', 'ON_HOLD', 'CANCELLED', 'CLOSED'])
     .withMessage('Invalid current_status'),
   
   body('project_stage')
     .optional()
+    .customSanitizer((val) => {
+      if (typeof val !== 'string') return val;
+      const upper = val.toUpperCase().trim();
+      if (upper === 'IMPLEMENTATION' || upper === 'CONSTRUCTION') return 'EXECUTION';
+      if (upper === 'TENDERING' || upper === 'TENDERING & AWARD') return 'PROCUREMENT';
+      if (upper === 'PRE-CONSTRUCTION') return 'PLANNING';
+      return upper;
+    })
     .isIn(['PLANNING', 'PROCUREMENT', 'EXECUTION', 'COMMISSIONING', 'COMPLETED'])
     .withMessage('Invalid project_stage')
 ];
