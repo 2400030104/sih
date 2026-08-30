@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lightbulb, CheckCircle } from 'lucide-react';
+import { Lightbulb, CheckCircle2, Check, XCircle } from 'lucide-react';
 import { Recommendation } from '../../services/types';
 import { formatDate } from '../../utils/formatDate';
 
@@ -71,24 +71,41 @@ export const RecommendationList: React.FC<RecommendationListProps> = ({
 
             {rec.rationale && (
               <div className="p-3 bg-white rounded-btn border border-slate-200 text-xs text-slate-600 space-y-1">
-                <span className="font-bold text-slate-900 block text-[10px] uppercase tracking-wider">Policy & Operational Basis</span>
+                <span className="font-bold text-slate-900 block text-[10px] uppercase tracking-wider">Policy &amp; Operational Basis</span>
                 <p className="leading-relaxed">{rec.rationale}</p>
               </div>
             )}
 
             <div className="flex items-center justify-between pt-2 border-t border-slate-200 text-xs">
               <span className="text-slate-500 text-[11px] font-mono">
-                Source: <strong className="text-slate-900">{rec.generated_by}</strong> • Status: <strong className="text-blue-600">{rec.status}</strong>
+                Source: <strong className="text-slate-900">{rec.generated_by}</strong> • Status: <strong className="text-blue-600 uppercase">{rec.status}</strong>
               </span>
 
-              {onStatusChange && rec.status === 'PENDING' && (
+              {onStatusChange && (
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => onStatusChange(rec.recommendation_id, 'ACCEPTED')}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-btn text-xs transition-colors cursor-pointer shadow-xs"
-                  >
-                    <CheckCircle className="w-3.5 h-3.5" /> Accept Action
-                  </button>
+                  {rec.status === 'PENDING' && (
+                    <button
+                      onClick={() => onStatusChange(rec.recommendation_id, 'ACCEPTED')}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-btn text-xs transition-colors cursor-pointer shadow-xs"
+                    >
+                      <Check className="w-3.5 h-3.5" /> Accept Intervention
+                    </button>
+                  )}
+
+                  {rec.status === 'ACCEPTED' && (
+                    <button
+                      onClick={() => onStatusChange(rec.recommendation_id, 'IMPLEMENTED')}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-btn text-xs transition-colors cursor-pointer shadow-xs"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Mark Completed
+                    </button>
+                  )}
+
+                  {rec.status === 'IMPLEMENTED' && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Completed
+                    </span>
+                  )}
                 </div>
               )}
             </div>

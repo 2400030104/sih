@@ -7,8 +7,9 @@ const ApiResponse = require('../utils/apiResponse');
 // GET /api/recommendations - All active recommendations
 router.get('/', RecommendationController.listRecommendations);
 
-// PATCH /api/recommendations/:id/status - Update recommendation status
+// PATCH & PUT /api/recommendations/:id/status - Update recommendation status
 router.patch('/:id/status', RecommendationController.updateStatus);
+router.put('/:id/status', RecommendationController.updateStatus);
 
 // POST /api/recommendations/generate/:projectId - Trigger rule-based recommendation generation
 router.post('/generate/:projectId', async (req, res, next) => {
